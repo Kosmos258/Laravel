@@ -29,6 +29,7 @@ trait CategoriesNewsTrait
 
     return [
       'id' => $id,
+      'category' => $id,
       'tittle' => \fake()->jobTitle(),
       'decscription' => \fake()->text(100),
       'author' => \fake()->userName(),
