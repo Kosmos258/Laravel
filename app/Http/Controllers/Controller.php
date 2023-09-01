@@ -1,20 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-<<<<<<< HEAD
-use Illuminate\Foundation\Bus\DispatchesJobs;
-=======
->>>>>>> 7b75587569b42e86effbccfce53afd8051535105
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-<<<<<<< HEAD
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-=======
     use AuthorizesRequests, ValidatesRequests;
->>>>>>> 7b75587569b42e86effbccfce53afd8051535105
+
+    public function getNews(int $id = null): array
+    {
+        $news = [];
+        if ($id === null) {
+            for ($i=0; $i<10; $i++) {
+                $news[] = [
+                    'id' => ($i === 0) ? ++$i : $i,
+                    'title' => fake()->jobTitle(),
+                    'image' => fake()->imageUrl(),
+                    'author' => fake()->userName(),
+                    'status' => 'ACTIVE',
+                    'description' => fake()->text(100),
+                    'created' => now()->format('d-m-Y H:i'),
+                ];
+            }
+
+            return $news;
+        }
+
+        return [
+            'id' => $id,
+            'title' => fake()->title(),
+            'image' => fake()->imageUrl(),
+            'author' => fake()->userName(),
+            'status' => 'ACTIVE',
+            'description' => fake()->text(100),
+            'created' => now(),
+        ];
+    }
 }
