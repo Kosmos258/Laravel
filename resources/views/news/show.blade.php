@@ -1,14 +1,11 @@
 @extends('layouts.main')
+@section('title') {{ $news['title'] }} - @parent @stop
 @section('content')
-
-    <div class="album py-5 bg-light">
-        <div class="container">
-            <img src="{{ $news['image'] }}" />
-            <h2>{{ $news['title']  }}</h2>
-            <p>{!! $news['description'] !!}</p>
-            <p>{{ $news['author'] }}</p>
-            <p>{{ $news['created'] }}</p>
-            <p>{{ $news['status'] }}</p>
-        </div>
-    </div>
+    <h2>{{ $news['title'] }}</h2> <br />
+    <div>
+        <img src="{{ $news['image'] }}" />
+        <p><em>{{ $news['author'] }}</em> &nbsp; ({{ $news['created_at'] }})</p>
+        <p>{{ $news['description'] }}</p>
+    </div><hr /><br />
 @endsection
+

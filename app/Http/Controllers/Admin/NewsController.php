@@ -1,30 +1,32 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Contracts\View\View;
+use App\Http\Controllers\NewsTrait;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
 
 class NewsController extends Controller
 {
+    use NewsTrait;
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(): view
     {
-        $news = $this->getNews();
-        return \view('admin.news.index', ['newsList' => $news]);
+        return view('admin.news.index', [
+            'newsList' => $this->getNews(),
+        ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): View
+    public function create(): view
     {
-        return \view('admin.news.create');
+
+        return view('admin.news.create');
     }
 
     /**
@@ -32,7 +34,12 @@ class NewsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+      //  dd($request->all());
+        //$_SESSION['title'] = $request->title;
+        $request->flash();
+        return redirect()->route('admin.news.create');
+
+       // return response()->json($request->all());
     }
 
     /**

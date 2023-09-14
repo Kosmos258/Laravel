@@ -1,25 +1,24 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
-final class NewsController extends Controller
+class NewsController extends Controller
 {
-    public function index(): View
+    use NewsTrait;
+
+    public function index()
     {
-        return view('news.index', [
-            'newsList' => $this->getNews(),
+        return view('news.index')->with([
+            'newsList' => $this->getNews()
         ]);
     }
 
-    public function show(int $id): View
+    public function show(int $id)
     {
-        return view('news.show', [
-            'news' => $this->getNews($id),
+        return view('news.show')->with([
+            'news' => $this->getNews($id)
         ]);
     }
 }
