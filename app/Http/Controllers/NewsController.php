@@ -1,33 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
-class NewsController extends Controller
+final class NewsController extends Controller
 {
-
-    use NewsTrait;
-    use CategoriesNewsTrait;
-
-    public function index()
+    public function index(): View
     {
-        return \view('news.index', [
-            'news' => $this->getNews(),
+        return view('news.index', [
+            'newsList' => $this->getNews(),
         ]);
     }
 
-    public function show(int $id)
+    public function show(int $id): View
     {
-        return $this->getNews($id);
-    }
-
-
-    public function getNewsByCategory($categoryId)
-    {
-    }
-
-    public function getNewsDetails($newsId)
-    {
+        return view('news.show', [
+            'news' => $this->getNews($id),
+        ]);
     }
 }
