@@ -4,32 +4,34 @@ namespace App\Http\Controllers;
 
 trait NewsTrait
 {
-  public function getNews(int $id = null): array
-  {
+    public function getNews(int $id = null): array
+    {
+        if ($id !== null) {
+            return [
+                'id' => $id,
+                'title' => fake()->jobTitle(),
+                'author' => fake()->userName(),
+                'image'  => fake()->imageUrl(200, 60),
+                'status' => 'ACTIVE',
+                'description' => fake()->text(100),
+                'created_at' => now()->format('d-m-Y H:i'),
+            ];
+        }
 
-    $news = [];
-    $quantityNews = 10;
+        $quantityNews = 10;
+        $news = [];
+        for ($i=0; $i < $quantityNews; $i++) {
+            $news[] = [
+                'id' => ($i === 0) ? ++$i : $i,
+                'title' => fake()->jobTitle(),
+                'author' => fake()->userName(),
+                'image'  => fake()->imageUrl(200, 60),
+                'status' => 'ACTIVE',
+                'description' => fake()->text(100),
+                'created_at' => now()->format('d-m-Y H:i'),
+            ];
+        }
 
-    if ($id === null) {
-      for ($i = 1; $i < $quantityNews; $i++) {
-        $news[$i] = [
-          'id' => $i,
-          'tittle' => \fake()->jobTitle(),
-          'decscription' => \fake()->text(100),
-          'author' => \fake()->userName(),
-          'created_at' => \now()->format('d-m-Y H:i'),
-        ];
-      }
-
-      return $news;
+        return $news;
     }
-
-    return [
-      'id' => $id,
-      'tittle' => \fake()->jobTitle(),
-      'decscription' => \fake()->text(100),
-      'author' => \fake()->userName(),
-      'created_at' => \now()->format('d-m-Y H:i'),
-    ];
-  }
 }
