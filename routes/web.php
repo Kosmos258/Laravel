@@ -1,10 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\IndexController as AdminController;
-use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
-use App\Http\Controllers\Admin\NewsController as AdminNewsController;
-use App\Http\Controllers\NewsController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\{HomeController, NewsController, NewsCategoryController};
+use \App\Http\Controllers\Admin\{CategoryController as AdminCategoryController, NewsController as AdminNewsController, IndexController as AdminController};
 
 /*
 |--------------------------------------------------------------------------
@@ -17,18 +15,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', HomeController::class)->name('mainpage');
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
+Route::prefix('categories')->name('categories.')->group(function () {
+    Route::get('/', [NewsCategoryController::class, 'index'])->name('topics');
+    Route::get('/{url_slug}', [NewsCategoryController::class, 'show'])->name('topics-detail');
 });
 
-Route::get('/news', [NewsController::class, 'index'])
-    ->name('news.index');
-Route::get('/news/{id}', [NewsController::class, 'show'])
-    ->where('id', '\d+')
-    ->name('news.show');
+Route::prefix('news')->name('news.')->group(function () {
+    Route::get('/', [NewsController::class, 'index'])->name('newsfeed');
+    Route::get('/{url_slug}', [NewsController::class, 'show'])->name('news-detail');
+});
 
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+
+Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', AdminController::class)->name('index');
-    Route::resource('categories', AdminCategoryController::class);
     Route::resource('news', AdminNewsController::class);
+    Route::resource('categories', AdminCategoryController::class);
 });
