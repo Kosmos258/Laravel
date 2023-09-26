@@ -1,0 +1,8 @@
+.card-text{
+    height: 3em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.pagination {
+    margin-top: 2em;
+}
