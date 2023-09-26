@@ -4,15 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\View\View;
+use Illuminate\View\View;
 
 class IndexController extends Controller
 {
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request): view
+    public function __invoke(Request $request): View
     {
-        return view('admin.index');
+        return \view('admin.index',['h1' => 'Панель управления']);
     }
 }

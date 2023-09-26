@@ -3,25 +3,25 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\View\View;
 
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index()
     {
-        return \view('admin.categories.index');
+        return \view('admin.topics-list', ['topics' => Category::query()->paginate(6)]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): View
+    public function create()
     {
-        return \view('admin.categories.create');
+        return \view('admin.create-category');
     }
 
     /**
@@ -29,7 +29,22 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+//        Category::query()->insert([
+//            'title' => $request->get('title'),
+//            'url_slug' => trim($request->get('url')),
+//            'description' => $request->get('description'),
+//            'created_at' => now(),
+//        ]);
+        $category = new Category([
+            'title' => $request->get('title'),
+            'url_slug' => trim($request->get('url')),
+            'description' => $request->get('description'),
+            'created_at' => now(),
+        ]);
+        if($category->save()){
+            return redirect()->route('admin.categories.index')->with('success', 'Категория успешно создана');
+        }
+        return back()->with('error', 'Не удалось создать категорию');
     }
 
     /**
