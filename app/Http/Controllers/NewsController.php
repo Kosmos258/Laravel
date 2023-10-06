@@ -1,21 +1,27 @@
 <?php
-declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\News;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class NewsController extends Controller
 {
     public function index(): View
     {
-        return \view('news.newsfeed', ['title' => 'Новости', 'h1' => "Лента новостей", 'news' => News::query()->paginate(6)]);
+        return  view('news.index', [
+            'newsCategories' => Category::all(),
+            'newsList' => News::all(),
+        ]);
     }
 
-    public function show(string $url_slug): View
+    public function show(int $id, int $categoriesID): View
     {
-        $newsData = News::getOneByField('url_slug', $url_slug);
-        return \view('news.news-detail', ['title' => $newsData->title, 'payload' => $newsData]);
+        return view('news.show', [
+            'news' => News::find($id),
+            'categories' => Category::find($categoriesID),
+        ]);
     }
 }

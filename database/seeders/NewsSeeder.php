@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Enums\News\Status;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class NewsSeeder extends Seeder
 {
@@ -14,25 +13,26 @@ class NewsSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('news')->insert($this->getData());
+        \DB::table('news')->insert($this->getData());
     }
 
-    public function getData()
+    public function getData(): array
     {
         $quantityNews = 10;
         $news = [];
-        for ($i = 0; $i < $quantityNews; $i++) {
+        for ($i=0; $i < $quantityNews; $i++) {
             $news[] = [
-                'category_id' => fake()->numberBetween(1, 3),
                 'title' => fake()->jobTitle(),
-                'author' => fake()->userName(),
-                'url_slug' => fake()->slug(),
-                'image' => fake()->imageUrl(200, 150),
-                'status' => fake()->randomElement(Status::getEnums()),
                 'description' => fake()->text(100),
+                'image'  => fake()->imageUrl(200, 150),
+                'author' => fake()->userName(),
+                'status' => Status::ACTIVE->value,
+                'category_id' => rand(1,10),
+                'source_id' => rand(1,10),
                 'created_at' => now(),
             ];
         }
+
         return $news;
     }
 }

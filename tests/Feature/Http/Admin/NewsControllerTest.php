@@ -12,25 +12,43 @@ class NewsControllerTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_News_List_Success(): void
+    public function testNewsListSuccess(): void
     {
         $response = $this->get(route('admin.news.index'));
 
-        $response->assertSeeText('Список новостей');
         $response->assertStatus(200);
     }
 
-    public function test_News_Store_Success(): void
+    public function testNewsCreateSuccess(): void
+    {
+        $response = $this->get(route('admin.news.create'));
+
+        $response->assertStatus(200);
+    }
+
+    public function testNewsStoreSuccess(): void
     {
         $postData = [
-            'title' => 'title',
-            'author' => 'Alex',
+            'title' => fake()->jobTitle(),
+            'author' => fake()->userName(),
             'status' => 'draft',
-            'description' => '1111',
+            'description' => fake()->text(100),
         ];
+
         $response = $this->post(route('admin.news.store'), $postData);
 
-        $response->assertStatus(302);
-        //$response->assertJson($postData);
+        $response->assertStatus(Response::HTTP_OK);
+        $response->assertJson($postData);
+    }
+    public function testNewsStoreError(): void
+    {
+        $postData = [
+            'author' => fake()->userName(),
+            'status' => 'draft',
+            'description' => fake()->text(100),
+        ];
+
+        $response = $this->post(route('admin.news.store'), $postData);
+        $response->assertFound();
     }
 }

@@ -2,74 +2,66 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\News\Status;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\News\CreateRequest;
-use App\Http\Requests\Admin\News\EditRequest;
+use App\Http\Requests\Admin\News\Create;
+use App\Http\Requests\Admin\News\Edit;
 use App\Models\Category;
 use App\Models\News;
-use Illuminate\Http\RedirectResponse;
+use App\Models\Source;
+use App\Services\Contracts\Upload;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rules\Enum;
 use Illuminate\View\View;
 
 class NewsController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-    /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
-        return view('admin.news-list', ['title' => 'Новости', 'h1' => "Список новостей", 'news' => News::query()
-            ->join('categories', 'categories.id', 'news.category_id')
-            ->select('news.*', 'categories.title as category_title')->paginate(5)
+        return view('admin.news.index', [
+            'newsList' => News::query()->status()->with('category')->paginate(10),
         ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request): View
+    public function create(): View
     {
         $categories = Category::all();
-        return \view('admin.create-news', ['categories' => $categories]);
+        $sources = Source::all();
+
+        return view( 'admin.news.create', [
+            'categories' => $categories,
+            'sources' => $sources,
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CreateRequest $request): RedirectResponse
+    public function store(Create $request)
     {
+        $validatedData = $request->validated();
 
-        $data = $request->only(['title', 'author', 'status', 'url', 'description', 'category_id',]);
-
-        $news = new News([
-            'title' => $data['title'],
-            'author' => $data['author'],
-            'status' => $data['status'],
-            'url_slug' => trim($data['url']),
-            'description' => $data['description'],
-            'category_id' => $data['category_id'],
-        ]);
-        if ($news->save()) {
-            return redirect()->route('admin.news.index')->with('success', 'Новость успешно создана');
+        if (!$request->hasFile('image')) {
+            $validatedData['image'] = 'news/default.jpg';
         }
-        return back()->with('error', 'Не удалось создать новость');
+    
+        $news = new News($validatedData);
+
+        if($news->save()) {
+            return redirect()->route('admin.news.index')->with('success', __('News was saved successfully'));
+        }
+
+        return back()->with('error', __('We can not save item, pleas try again'));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(News $news)
     {
         //
     }
@@ -80,34 +72,43 @@ class NewsController extends Controller
     public function edit(News $news)
     {
         $categories = Category::all();
-        return \view('admin.edit-news', [
+        $sources = Source::all();
+
+        return view( 'admin.news.edit', [
+            'categories' => $categories,
+            'sources' => $sources,
             'news' => $news,
-            'categories' => $categories
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(EditRequest $request, News $news): RedirectResponse
+    public function update(Edit $request, News $news, Upload $upload)
     {
-        $data = $request->only(['title', 'url', 'author', 'status', 'category_id', 'description',]);
-        $news->fill($data);
-        if ($news->save()) {
-            return redirect()->route('admin.news.index')->with('success', 'Новость успешно изменена');
+        $validated = $request->validated();
+        if ($request->hasFile('image')) {
+            $validated['image'] = $upload->create($request->file('image'));
         }
-        return back()->with('error', 'Не удалось отредактировать новость');
+
+        $news = $news->fill($validated);
+
+        if($news->save()) {
+            return redirect()->route('admin.news.index')->with('success', __('News was saved successfully'));
+        }
+
+        return back()->with('error', __('We can not save item, pleas try again'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(News $news): RedirectResponse
+    public function destroy(News $news)
     {
-        $id = $news->id;
         if ($news->delete()) {
-            return redirect()->route('admin.news.index')->with('success', 'Новость ' . $id . ' успешно удалена');
+            return redirect()->route('admin.news.index')->with('success', 'The record was deleted successfully');
         }
-        return back()->with('error', 'Не удалось удалить новость');
+
+        return back()->with('error', 'Record not found');
     }
 }

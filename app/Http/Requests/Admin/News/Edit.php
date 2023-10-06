@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Admin\News;
 
 use App\Enums\News\Status;
-use App\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
@@ -24,14 +23,28 @@ class Edit extends FormRequest
      */
     public function rules(): array
     {
-        $tableNameCategory = (new Category())->getTable();
         return [
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'source_id' => ['required', 'integer', 'exists:sources,id'],
             'title' => ['required', 'string', 'min:3', 'max:150'],
-            'category_id' => ['required', 'integer', "exists:{$tableNameCategory},id"],
             'author' => ['required', 'string', 'min:2', 'max:100'],
             'image' => ['nullable', 'image'],
             'status' => ['required', new Enum(Status::class)],
             'description' => ['nullable', 'string'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'required' => 'When editing, you did not fill in the :attribute field',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return  [
+            'title' => 'N@me',
         ];
     }
 }

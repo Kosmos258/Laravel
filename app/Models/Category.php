@@ -2,21 +2,30 @@
 
 namespace App\Models;
 
-use App\Traits\TModelGetOneByField;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class Category extends Model
 {
-    use HasFactory, TModelGetOneByField;
+    use HasFactory;
+
+    protected $table = 'categories';
 
     protected $fillable = [
-        'title',
-        'url_slug',
-        'description',
-        'created_at',
+        'name',
     ];
-    public function news(){
+
+    public function scopeStatus(Builder $query): Builder
+    {
+        return $query;
+    }
+
+    public function news(): HasMany
+    {
         return $this->hasMany(News::class, 'category_id');
     }
+
 }

@@ -2,27 +2,22 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-<<<<<<< HEAD
     "keywords": ["laravel", "framework"],
-=======
-    "keywords": [
-        "laravel",
-        "framework"
-    ],
->>>>>>> 7b75587569b42e86effbccfce53afd8051535105
     "license": "MIT",
     "require": {
         "php": "^8.1",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
-        "laravel/tinker": "^2.8"
+        "laravel/socialite": "^5.9",
+        "laravel/tinker": "^2.8",
+        "laravel/ui": "^4.2",
+        "orchestra/parser": "^8.0"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.9",
         "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.0",
-        "laravel/sail": "^1.18",
+        "laravel/sail": "^1.25",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^7.0",
         "phpunit/phpunit": "^10.1",

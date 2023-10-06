@@ -2,30 +2,25 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\News\Status;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Category\{CreateRequest, EditRequest};
+use App\Http\Requests\Admin\Categories\Create;
+use App\Http\Requests\Admin\Categories\Edit;
 use App\Models\Category;
+use App\Models\News;
+use App\Models\Source;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rules\Enum;
+use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-    /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
-        return \view('admin.topics-list', ['topics' => Category::query()->paginate(6)]);
+        return view('admin.categories.index', [
+            'categories' => Category::query()->status()->paginate(10),
+        ]);
     }
 
     /**
@@ -33,24 +28,21 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return \view('admin.create-category');
+        return view( 'admin.categories.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CreateRequest $request)
+    public function store(Create $request)
     {
-        $category = new Category([
-            'title' => $request->get('title'),
-            'url_slug' => trim($request->get('url')),
-            'description' => $request->get('description'),
-            'created_at' => now(),
-        ]);
-        if($category->save()){
-            return redirect()->route('admin.categories.index')->with('success', 'Категория успешно создана');
+        $category = new Category($request->validated());
+
+        if($category->save()) {
+            return redirect()->route('admin.categories.index')->with('success', __('The record was saved successfully'));
         }
-        return back()->with('error', 'Не удалось создать категорию');
+
+        return back()->with('error', __('We can not save item, pleas try again'));
     }
 
     /**
@@ -64,26 +56,25 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Category $category)
     {
-        //
+        return view( 'admin.categories.edit', [
+            'category' => $category,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(EditRequest $request, string $id)
+    public function update(Edit $request, Category $category)
     {
-        $category = new Category([
-            'title' => $request->get('title'),
-            'url_slug' => trim($request->get('url')),
-            'description' => $request->get('description'),
-            'created_at' => now(),
-        ]);
-        if($category->save()){
-            return redirect()->route('admin.categories.index')->with('success', 'Категория успешно изменена');
+        $category->fill($request->validated());
+
+        if($category->save()) {
+            return redirect()->route('admin.categories.index')->with('success', __('The record was saved successfully'));
         }
-        return back()->with('error', 'Не удалось отредактировать категорию');
+
+        return back()->with('error', __('The record was saved successfully'));
     }
 
     /**
@@ -91,10 +82,10 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        $category_id = $category->id;
         if ($category->delete()) {
-            return redirect()->route('admin.categories.index')->with('success', 'Категория ' . $category_id . ' успешно удалена');
+            return redirect()->route('admin.categories.index')->with('success', __('The record was deleted successfully'));
         }
-        return back()->with('error', 'Не удалось удалить категорию');
+
+        return back()->with('error', 'Record not found');
     }
 }
